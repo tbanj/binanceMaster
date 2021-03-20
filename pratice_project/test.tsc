@@ -1,0 +1,21 @@
+class Name {
+    constructor(firstN ,lastN ) {
+            this.firstName= firstN;
+            this.lastName = lastN;
+    }
+
+    setFirst(firstN) {
+        this.firstName = firstNa;
+    }
+
+    setLast(lastN) {
+        this.lastName = lastNa;
+    }
+
+    getName (){
+        return `${this.firstName} ${this.lastName}`;
+    }
+}
+
+const sampleN = new Name('Alabi', 'Wahab');
+console.log(sampleN.getName())
