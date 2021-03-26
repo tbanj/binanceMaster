@@ -18,7 +18,7 @@
 
 <body>
 
-    <h2>Tranparent Dapp Demo</h2>
+    <h2>Transparent Dapp Demo</h2>
     <br >
     <h2 id="info"></h2><br>
     <button onclick="getTweets();">Get All Tweets</button>
@@ -29,6 +29,13 @@
     Status: <span id="status">Loading...</span>
 
     <script type="text/javascript">
+
+       // anonymouse function to reloas the page every 10secs
+      (setInterval(() => {
+    location.reload();
+    console.log('page reload just occured');
+}, 10000))();
+
      var a = document.getElementById("info");
 
         async function loadWeb3() {
@@ -50,12 +57,30 @@
 
         async function getTweets() {
             updateStatus('fetching All Tweets...');
-            const tweetsNumber = await window.contract.methods.getTotalTweet().call();
-            
-            for (i = 0;i < tweetsNumber;i++){
-                var result1 = await window.contract.methods.getTweetDetail(i).call();
-                a.innerHTML = a.innerHTML+"<h5>" + "TweetID: "+result1[0]+" " + "Name: " + result1[1] + " Content: " + result1[2] + "</h5>";
+            a.innerHTML = "";
 
+            // create count variable to count data
+            let count = 0;
+            let tweetsNumber = await window.contract.methods.getTotalTweet().call();
+            
+            for (let i = tweetsNumber-1; i >=0; i--){
+            
+            
+              try {
+                    
+                    var result1 = await window.contract.methods.getTweetDetail(i).call();
+                    /* check if count is 10 break the loop */
+                    if(count >9) {break; }
+                if(result1){
+                a.innerHTML = a.innerHTML+"<h5>" + "TweetID: "+result1[0]+" " + "Name: " + result1[1] + " Content: " + result1[2] + "</h5>";
+                
+                // increment count
+                count++;
+                }
+               }
+               catch(error){
+                   console.log("error");
+               }
             }
            
             updateStatus(`All Tweets No.: ${tweetsNumber}`);
@@ -67,10 +92,15 @@
         }
 
         async function changeCoolNumber() {
-            updateStatus(`Updating LonelyTwitter ...`);
+            try {
+                updateStatus(`Updating LonelyTwitter ...`);
             const account = await getCurrentAccount();
             const coolNumber = await window.contract.methods.createTweet(document.getElementById("name").value,document.getElementById("content").value).send({ from: account });
             updateStatus('Updated.');
+            document.getElementById("name").value= "";
+            document.getElementById("content").value= "";
+            }
+            catch(error) { console.log(error);}
         }
 
         async function load() {
